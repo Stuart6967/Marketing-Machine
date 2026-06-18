@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Care4Group Marketing Machine</title>
+<style>
+:root{--blue:#0066ff;--green:#00c389;--dark:#0f172a;--bg:#f8fafc;--text:#1e293b;--muted:#64748b;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+aside{background:var(--dark);color:white;padding:24px;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{font-size:24px;font-weight:900;margin:0}.logo span{color:var(--green)}
+.tag{color:#cbd5e1;margin:8px 0 22px}.nav button{display:block;width:100%;text-align:left;background:#1e293b;color:white;border:0;border-radius:14px;padding:13px 15px;margin:7px 0;cursor:pointer;font-weight:800}
+.nav button:hover,.nav button.active{background:var(--blue)}
+main{padding:32px;max-width:1220px;width:100%}section{display:none}.show{display:block}
+.hero{background:linear-gradient(135deg,#0066ff,#003b91);color:white;border-radius:30px;padding:34px;margin-bottom:22px}
+.hero h1{font-size:38px;margin:0 0 10px}.hero p{font-size:18px;opacity:.92}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 12px 35px rgba(15,23,42,.08)}
+.kpi{font-size:34px;font-weight:900;color:var(--blue)}
+label{font-weight:900;font-size:14px}input,select,textarea{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:14px;margin:7px 0 14px;font:inherit;background:white}
+textarea{min-height:160px}.btn{border:0;border-radius:16px;padding:14px 18px;font-weight:900;cursor:pointer;margin:6px 8px 12px 0}
+.primary{background:var(--blue);color:white}.green{background:var(--green);color:white}.ghost{background:#e2e8f0;color:#0f172a}.danger{background:#fee2e2;color:#991b1b}
+.output{white-space:pre-wrap;background:#f1f5f9;border-radius:18px;padding:18px;border:1px solid var(--line);line-height:1.55;margin-top:10px}
+.msgbox{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}.msgbox h3{margin-top:0}
+.badge{display:inline-block;background:#dcfce7;color:#166534;border-radius:999px;padding:7px 12px;font-weight:900;margin-bottom:12px}
+.small{color:var(--muted);font-size:14px}.bottom{display:none}
+@media(max-width:900px){.app{display:block}aside{height:auto;position:relative}.nav{display:none}main{padding:16px}.grid,.cards{grid-template-columns:1fr}.hero h1{font-size:28px}.bottom{display:flex;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);z-index:99}.bottom button{flex:1;border:0;background:white;padding:10px 3px;font-size:12px;font-weight:800}body{padding-bottom:62px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+<p class="logo">Care4<span>Content</span> Machine</p>
+<p class="tag">Gratis marketingtool voor recruitmentcontent.</p>
+<div class="nav">
+<button class="active" onclick="tab('dashboard',this)">Dashboard</button>
+<button onclick="tab('repurpose',this)">Content Repurposer</button>
+<button onclick="tab('calendar',this)">Content Kalender</button>
+<button onclick="tab('story',this)">Candidate Stories</button>
+<button onclick="tab('hooks',this)">Viral Hooks</button>
+<button onclick="tab('branding',this)">Employer Branding</button>
+<button onclick="tab('pain',this)">Pain Point Database</button>
+<button onclick="tab('comments',this)">Comment Generator</button>
+<button onclick="tab('news',this)">Nieuws → Content</button>
+<button onclick="tab('personal',this)">Personal Brand</button>
+<button onclick="tab('carousel',this)">Carousel Maker</button>
+<button onclick="tab('meme',this)">Meme Generator</button>
+<button onclick="tab('seo',this)">SEO Machine</button>
+<button onclick="tab('email',this)">E-mail Nurture</button>
+<button onclick="tab('analytics',this)">Analytics</button>
+</div>
+</aside>
+
+<main>
+<section id="dashboard" class="show">
+<div class="hero">
+<h1>Van één idee naar 30 contentstukken.</h1>
+<p>Voor recruitment marketing, employer branding, SEO, nieuwsbrieven en social content.</p>
+<button class="btn green" onclick="go('repurpose')">Start met content maken</button>
+</div>
+<div class="cards">
+<div class="card"><b>Content gemaakt</b><div class="kpi" id="kMade">0</div></div>
+<div class="card"><b>Kopieën</b><div class="kpi" id="kCopy">0</div></div>
+<div class="card"><b>Tools</b><div class="kpi">13</div></div>
+<div class="card"><b>Kosten</b><div class="kpi">€0</div></div>
+</div>
+<div class="panel">
+<span class="badge">Care4Group Mode</span>
+<h2>Menselijk. Direct. Geen marketingblabla.</h2>
+<p>Plak een vacature, kandidaatquote, nieuwsartikel of idee. De tool maakt er direct posts, mails, hooks, carrousels en campagnes van.</p>
+</div>
+</section>
+
+<section id="repurpose" class="panel showx">
+<h2>Content Repurposer</h2>
+<textarea id="repInput" placeholder="Plak vacature, intake, quote, voice memo transcript of idee..."></textarea>
+<button class="btn primary" onclick="repurpose()">Maak 10 contentstukken</button>
+<div id="repOut"></div>
+</section>
+
+<section id="calendar" class="panel">
+<h2>Zorg Content Kalender Generator</h2>
+<div class="grid">
+<div><label>Doelgroep</label><input id="calAudience" value="Verpleegkundigen"></div>
+<div><label>Maand</label><input id="calMonth" value="September"></div>
+</div>
+<button class="btn primary" onclick="calendar()">Maak contentkalender</button>
+<div id="calOut" class="output"></div>
+</section>
+
+<section id="story" class="panel">
+<h2>Candidate Stories Engine</h2>
+<textarea id="storyInput" placeholder='Bijvoorbeeld: "Ik ben gestopt omdat ik alleen nog maar gaten aan het vullen was."'></textarea>
+<button class="btn primary" onclick="story()">Maak content van quote</button>
+<div id="storyOut"></div>
+</section>
+
+<section id="hooks" class="panel">
+<h2>Viral Hook Generator</h2>
+<input id="hookTopic" value="werkdruk in de zorg">
+<button class="btn primary" onclick="hooks()">Genereer hooks</button>
+<div id="hookOut" class="output"></div>
+</section>
+
+<section id="branding" class="panel">
+<h2>Employer Branding Machine</h2>
+<input id="brandCompany" value="zorgorganisatie">
+<textarea id="brandInput" placeholder="Waar staat de werkgever voor? Wat maakt de werkplek anders?"></textarea>
+<button class="btn primary" onclick="branding()">Maak employer branding set</button>
+<div id="brandOut"></div>
+</section>
+
+<section id="pain" class="panel">
+<h2>Candidate Pain Point Database</h2>
+<select id="painSelect">
+<option>Werkdruk</option><option>Roosters</option><option>Administratie</option><option>Onderbezetting</option><option>Weinig waardering</option><option>Reistijd</option>
+</select>
+<button class="btn primary" onclick="pain()">Maak contentideeën</button>
+<div id="painOut" class="output"></div>
+</section>
+
+<section id="comments" class="panel">
+<h2>LinkedIn Comment Generator</h2>
+<textarea id="commentInput" placeholder="Plak de tekst van een LinkedIn-post waarop je wilt reageren..."></textarea>
+<button class="btn primary" onclick="comments()">Maak 10 comments</button>
+<div id="commentOut" class="output"></div>
+</section>
+
+<section id="news" class="panel">
+<h2>Nieuws → Content Machine</h2>
+<textarea id="newsInput" placeholder="Plak nieuwsartikel, samenvatting of linktitel..."></textarea>
+<button class="btn primary" onclick="newsContent()">Maak nieuwscontent</button>
+<div id="newsOut"></div>
+</section>
+
+<section id="personal" class="panel">
+<h2>Personal Brand Engine</h2>
+<input id="personalTopic" value="arbeidsmarkt in de zorg">
+<button class="btn primary" onclick="personal()">Maak posts</button>
+<div id="personalOut"></div>
+</section>
+
+<section id="carousel" class="panel">
+<h2>AI Carousel Maker</h2>
+<textarea id="carouselInput" placeholder="Plak post of onderwerp..."></textarea>
+<button class="btn primary" onclick="carousel()">Maak carousel structuur</button>
+<div id="carouselOut" class="output"></div>
+</section>
+
+<section id="meme" class="panel">
+<h2>Recruitment Meme Generator</h2>
+<input id="memeInput" value='Kandidaat zegt: "ik denk erover na"'>
+<button class="btn primary" onclick="meme()">Maak meme teksten</button>
+<div id="memeOut" class="output"></div>
+</section>
+
+<section id="seo" class="panel">
+<h2>SEO Machine</h2>
+<input id="seoKeyword" value="Verzorgende IG vacatures Rotterdam">
+<button class="btn primary" onclick="seo()">Maak SEO pakket</button>
+<div id="seoOut"></div>
+</section>
+
+<section id="email" class="panel">
+<h2>E-mail Nurture Generator</h2>
+<input id="emailAudience" value="Verpleegkundige">
+<button class="btn primary" onclick="email()">Maak 5-delige nurture</button>
+<div id="emailOut"></div>
+</section>
+
+<section id="analytics" class="panel">
+<h2>Analytics</h2>
+<div class="cards">
+<div class="card"><b>Content gemaakt</b><div class="kpi" id="aMade">0</div></div>
+<div class="card"><b>Gekopieerd</b><div class="kpi" id="aCopy">0</div></div>
+<div class="card"><b>Laatste tool</b><div class="kpi" style="font-size:22px" id="aLast">-</div></div>
+<div class="card"><b>Status</b><div class="kpi">Live</div></div>
+</div>
+<button class="btn danger" onclick="resetStats()">Reset</button>
+</section>
+</main>
+</div>
+
+<div class="bottom">
+<button onclick="go('dashboard')">Home</button>
+<button onclick="go('repurpose')">Content</button>
+<button onclick="go('story')">Stories</button>
+<button onclick="go('hooks')">Hooks</button>
+<button onclick="go('analytics')">Stats</button>
+</div>
+
+<script>
+const stats=JSON.parse(localStorage.getItem("contentStats")||'{"made":0,"copy":0,"last":"-"}');
+function save(){localStorage.setItem("contentStats",JSON.stringify(stats));render()}
+function render(){kMade.innerText=stats.made;kCopy.innerText=stats.copy;aMade.innerText=stats.made;aCopy.innerText=stats.copy;aLast.innerText=stats.last}
+render();
+function made(tool){stats.made++;stats.last=tool;save()}
+function tab(id,btn){document.querySelectorAll("main section").forEach(s=>s.classList.remove("show"));document.getElementById(id).classList.add("show");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active")}
+function go(id){tab(id,document.querySelector(`.nav button[onclick*="${id}"]`))}
+function copyText(t){navigator.clipboard.writeText(t);stats.copy++;save();alert("Gekopieerd.")}
+function box(title,text){let id="b"+Math.random().toString(36).slice(2);return `<div class="msgbox"><h3>${title}</h3><div class="output" id="${id}">${text}</div><button class="btn ghost" onclick="copyText(document.getElementById('${id}').innerText)">Kopieer</button></div>`}
+function clean(x){return x && x.trim()?x.trim():"dit onderwerp"}
+
+function repurpose(){
+let x=clean(repInput.value);made("Repurposer");
+repOut.innerHTML=
+box("LinkedIn post",`Niet elke zorgprofessional zoekt een nieuwe baan.
+
+Maar bijna iedereen zoekt iets beters.
+
+Meer rust.
+Meer waardering.
+Meer duidelijkheid.
+Minder gedoe.
+
+Wat mij opviel in dit verhaal:
+
+${x}
+
+De vraag is niet altijd: “wil je weg?”
+
+De betere vraag is:
+
+Wat moet er veranderen zodat je weer met plezier werkt?`)
++box("Nieuwsbrief intro",`Deze week viel één ding op in onze gesprekken met zorgprofessionals.
+
+${x}
+
+Het laat zien dat goede zorg niet alleen draait om vacatures.
+
+Het draait om luisteren naar wat mensen echt nodig hebben.`)
++box("Instagram caption",`Soms zegt één zin alles.
+
+“${x.slice(0,180)}”
+
+Herkenbaar? Dan ben je niet de enige.`)
++box("Facebook post",`Veel zorgprofessionals lopen tegen hetzelfde aan.
+
+Niet omdat ze hun werk niet mooi vinden.
+
+Maar omdat de omstandigheden steeds zwaarder worden.
+
+${x}
+
+Wat zou voor jou het verschil maken?`)
++box("Vacature intro",`Ben jij toe aan een plek waar je gewoon goede zorg kunt leveren zonder continu achter de feiten aan te lopen?
+
+Dan is dit misschien interessant voor je.`)
++box("Poll",`Wat zou voor jou het meeste verschil maken?
+
+A. Meer rust
+B. Beter rooster
+C. Meer waardering
+D. Fijner team`)
++box("Carousel",`Slide 1: Waarom zorgprofessionals niet altijd weg willen
+Slide 2: Ze willen vooral dat het beter wordt
+Slide 3: Minder druk
+Slide 4: Meer waardering
+Slide 5: Duidelijke afspraken
+Slide 6: Herkenbaar? Praat eens met ons.`)
+}
+
+function calendar(){
+let a=calAudience.value,m=calMonth.value;made("Kalender");
+let out=`Contentkalender voor ${a} - ${m}\n\n`;
+for(let i=1;i<=30;i++){
+out+=`${i}. Postidee: Wat ${a.toLowerCase()}s écht belangrijk vinden op werk\nHook: "Bijna niemand zegt dit hardop..."\nCTA: "Herkenbaar?"\n\n`;
+}
+calOut.innerText=out;
+}
+
+function story(){
+let q=clean(storyInput.value);made("Stories");
+storyOut.innerHTML=
+box("LinkedIn story post",`Een kandidaat zei laatst:
+
+“${q}”
+
+Dat bleef hangen.
+
+Want dit is precies waarom veel zorgprofessionals niet per se een andere baan zoeken.
+
+Ze zoeken een plek waar het weer klopt.
+
+Rust.
+Duidelijkheid.
+Waardering.
+Een team dat naast je staat.
+
+Herken je dit?`)
++box("Poll",`Wat herken jij het meest?
+
+A. Alleen gaten vullen
+B. Te weinig waardering
+C. Te veel administratie
+D. Slechte roosters`)
++box("Vacature haakje",`Ben jij klaar met alleen maar gaten vullen?
+
+Dan is het misschien tijd voor een plek waar je gewoon goede zorg kunt leveren.`)
++box("Nieuwsbrief onderwerp",`Deze zin van een kandidaat zegt alles over de zorgarbeidsmarkt`);
+}
+
+function hooks(){
+let t=hookTopic.value;made("Hooks");
+let base=["Bijna niemand zegt dit hardop over","De grootste misvatting over","Ik sprak iemand die klaar was met","Waarom goede mensen afhaken door","Dit is wat zorgprofessionals écht bedoelen met","Stop met doen alsof","Wat als het probleem niet de kandidaat is, maar","Iedereen praat over personeelstekort, maar niemand over","Eén zin van een kandidaat bleef hangen:","De zorg heeft geen motivatieprobleem. De zorg heeft een"];
+hookOut.innerText=Array.from({length:50},(_,i)=>(i+1)+". "+base[i%base.length]+" "+t+".").join("\n");
+}
+
+function branding(){
+let c=brandCompany.value||"deze organisatie";made("Branding");
+brandOut.innerHTML=
+box("Employer branding post",`Waarom mensen bij ${c} willen werken?
+
+Niet door mooie woorden.
+
+Maar door hoe een dienst voelt.
+
+Krijg je hulp als het druk is?
+Luistert iemand als je vastloopt?
+Zijn afspraken duidelijk?
+Kun je gewoon goede zorg leveren?
+
+Dat is employer branding.`)
++box("Medewerkersverhaal",`“Ik merkte vooral dat ik hier niet alles alleen hoef te doen.”
+
+Dat is misschien wel de belangrijkste reden waarom mensen blijven bij ${c}.`)
++box("Vacature intro",`Bij ${c} draait het niet om mooie beloftes.
+
+Het draait om een werkplek waar je je werk goed kunt doen.`)
+}
+
+function pain(){
+let p=painSelect.value;made("Pain Points");
+painOut.innerText=`Pain point: ${p}
+
+20 contentideeën:
+1. Waarom ${p.toLowerCase()} meer kapotmaakt dan mensen denken
+2. Wat zorgprofessionals hierover niet hardop zeggen
+3. De verborgen reden waarom mensen afhaken
+4. Hoe je dit bespreekbaar maakt
+5. Wat werkgevers kunnen doen
+6. Wat kandidaten hierin zoeken
+7. Poll over ${p.toLowerCase()}
+8. Quote-post
+9. Checklist-post
+10. Carousel
+11. Myth-busting post
+12. Story van kandidaat
+13. Vraag aan doelgroep
+14. Mini-rant
+15. Oplossingspost
+16. Employer branding post
+17. Vacaturehaakje
+18. Nieuwsbrief
+19. Short video script
+20. Referral post`;
+}
+
+function comments(){
+let x=clean(commentInput.value);made("Comments");
+commentOut.innerText=[
+"Sterk punt. Vooral omdat dit in de praktijk vaak pas zichtbaar wordt als mensen al bijna afhaken.",
+"Herkenbaar. In gesprekken met zorgprofessionals hoor je vaak dat het niet om één ding gaat, maar om opstapeling.",
+"Mooi verwoord. Ik denk dat werkgevers hier veel vaker naar moeten luisteren vóórdat mensen vertrekken.",
+"Dit raakt precies de kern: mensen willen niet minder werken omdat ze niet willen, maar omdat het zo niet vol te houden is.",
+"Interessant. De vraag is misschien niet alleen hoe we mensen aantrekken, maar vooral hoe we zorgen dat ze blijven.",
+"Hier zit veel waarheid in. Goede zorg begint bij goede omstandigheden voor de mensen die het werk doen.",
+"Ik denk dat veel zorgprofessionals dit herkennen, maar het niet altijd zo direct durven zeggen.",
+"Dit zou eigenlijk standaard onderdeel moeten zijn van elk werkgeversgesprek.",
+"Sterk. Vooral het verschil tussen belofte en dagelijkse praktijk blijft belangrijk.",
+"Helemaal eens. Kleine verbeteringen in rooster, waardering en communicatie kunnen enorm verschil maken."
+].join("\n\n");
+}
+
+function newsContent(){
+let n=clean(newsInput.value);made("Nieuws");
+newsOut.innerHTML=
+box("LinkedIn nieuws post",`Er is weer nieuws over de zorgarbeidsmarkt.
+
+${n}
+
+Maar de echte vraag is:
+
+Wat betekent dit voor de mensen op de werkvloer?
+
+Want beleid is belangrijk.
+
+Maar uiteindelijk voelen verpleegkundigen, verzorgenden en begeleiders elke verandering direct in hun dienst.`)
++box("Discussievraag",`Wat merken zorgprofessionals hier volgens jou het meest van in de praktijk?`)
++box("Poll",`Wat heeft de meeste impact?
+
+A. Werkdruk
+B. Roosters
+C. Salaris
+D. Waardering`)
+}
+
+function personal(){
+let t=personalTopic.value;made("Personal Brand");
+personalOut.innerHTML=
+box("Controversiële post",`We praten te veel over ${t} alsof het een spreadsheetprobleem is.
+
+Maar het is een menselijk probleem.
+
+Mensen blijven niet voor een vacaturetekst.
+Mensen blijven voor rust, vertrouwen en waardering.`)
++box("Educatieve post",`3 dingen die vaak vergeten worden bij ${t}:
+
+1. Luister naar vertrekkers
+2. Maak roosters bespreekbaar
+3. Stop met corporate taal
+
+Klinkt simpel.
+Is het niet.`)
++box("Story post",`Ik sprak iemand die zei:
+
+“Ik wil niet weg uit de zorg. Ik wil weg uit deze manier van werken.”
+
+Dat vat ${t} misschien beter samen dan welk rapport dan ook.`)
+}
+
+function carousel(){
+let x=clean(carouselInput.value);made("Carousel");
+carouselOut.innerText=`Carousel structuur
+
+Slide 1:
+${x}
+
+Slide 2:
+Het probleem is niet dat mensen niet willen werken.
+
+Slide 3:
+Het probleem is dat de omstandigheden vaak niet kloppen.
+
+Slide 4:
+Te weinig rust.
+Te veel druk.
+Te weinig waardering.
+
+Slide 5:
+Goede mensen blijven als ze goed kunnen werken.
+
+Slide 6:
+Vraag jezelf af:
+maken wij het werk lichter of zwaarder?
+
+Slide 7:
+Herkenbaar? Deel dit met iemand in de zorg.`;
+}
+
+function meme(){
+let x=memeInput.value;made("Meme");
+memeOut.innerText=`10 meme teksten voor: ${x}
+
+1. Recruiter: "Ze klinkt enthousiast." Kandidaat: ${x}
+2. Wanneer je kandidaat zegt ${x} en je agenda alvast leegmaakt.
+3. POV: je wacht op reactie sinds vorige week dinsdag.
+4. "Ik laat het je morgen weten" - beroemde laatste woorden.
+5. Recruiter optimism level: nog steeds 100%.
+6. Wanneer je follow-up vriendelijk, luchtig én wanhopig tegelijk moet zijn.
+7. Ik: geen druk hoor. Ook ik: refresh mail elke 3 minuten.
+8. Kandidatenreis of verdwijntruc?
+9. De stilte na ${x}.
+10. Ghosting, maar maak het professioneel.`;
+}
+
+function seo(){
+let k=seoKeyword.value;made("SEO");
+seoOut.innerHTML=
+box("Meta title",`${k} | Vind een zorgbaan die bij je past`)
++box("Meta description",`Zoek je ${k}? Bekijk functies met duidelijke uren, salarisinformatie en persoonlijke begeleiding zonder recruitmentpraat.`)
++box("Blog outline",`Titel: Waar let je op bij ${k}?
+
+Intro:
+Veel zorgprofessionals zoeken niet zomaar een nieuwe baan. Ze zoeken een plek waar het beter klopt.
+
+H2: Salaris en uren
+H2: Rooster en werkdruk
+H2: Reistijd
+H2: Team en cultuur
+H2: Vragen die je moet stellen`)
++box("FAQ",`Wat verdient een zorgprofessional in deze functie?
+Welke uren zijn mogelijk?
+Is er ruimte voor vaste dagen?
+Hoe ziet het team eruit?
+Hoe snel kan ik kennismaken?`);
+}
+
+function email(){
+let a=emailAudience.value;made("Email");
+emailOut.innerHTML=
+box("Mail 1",`Onderwerp: Herkenbaar?
+
+Hoi [Naam],
+
+Veel ${a.toLowerCase()}s die wij spreken zoeken niet per se direct een andere baan.
+
+Ze zijn vooral benieuwd of het ergens beter kan.
+
+Meer rust.
+Meer waardering.
+Betere afspraken.
+
+Herkenbaar?`)
++box("Mail 2",`Onderwerp: Wat zou jij veranderen?
+
+Hoi [Naam],
+
+Als jij één ding aan je werk zou mogen veranderen, wat zou dat zijn?
+
+Rooster?
+Werkdruk?
+Team?
+Salaris?
+Reistijd?`)
++box("Mail 3",`Onderwerp: Geen verkooppraat
+
+Hoi [Naam],
+
+We sturen je geen standaard vacaturepraat.
+
+Alleen functies waarvan we denken dat ze echt kunnen passen.`)
++box("Mail 4",`Onderwerp: De korte versie
+
+Hoi [Naam],
+
+Zal ik je eens 2 of 3 opties sturen die passen bij jouw wensen?
+
+Dan kun je zelf kijken of er iets tussen zit.`)
++box("Mail 5",`Onderwerp: Ik laat je hierna met rust
+
+Hoi [Naam],
+
+Laatste bericht van mijn kant.
+
+Als je ooit wilt sparren over een volgende stap, weet je me te vinden.`);
+}
+
+function resetStats(){localStorage.removeItem("contentStats");location.reload()}
+</script>
+</body>
+</html>
